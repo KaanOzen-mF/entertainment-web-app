@@ -1,76 +1,105 @@
 // src/components/Navbar.tsx
-import Link from "next/link";
+
+"use client";
+
 import Image from "next/image";
+import Link from "next/link";
+import { usePathname } from "next/navigation"; // 1. usePathname hook'unu import et
+import useIsDesktop from "@/hooks/useIsDesktop";
 
-export default function Navbar() {
-  return (
-    <aside className="bg-[#161D2F] p-4 flex items-center justify-between md:justify-start md:flex-col md:w-24 md:p-8">
-      {/* Logo */}
-      <div className="mb-12 md:mb-16">
-        <Image src="/assets/logo.svg" alt="App Logo" width={32} height={32} />
-      </div>
+const Navbar = () => {
+  const isDesktop = useIsDesktop();
+  const pathname = usePathname(); // 2. Mevcut sayfa yolunu al
 
-      {/* Navigation Links */}
-      <nav className="flex md:flex-col gap-6 md:gap-10">
-        {/* Home */}
-        <Link
-          href="/"
-          className="text-[#5A698F] hover:text-[#FC4747] transition-colors"
-        >
-          <Image
-            src="/assets/icon-nav-home.svg"
-            alt="Home"
-            width={20}
-            height={20}
-          />
-        </Link>
-        {/* Movies */}
-        <Link
-          href="/movies"
-          className="text-[#5A698F] hover:text-[#FC4747] transition-colors"
-        >
-          <Image
-            src="/assets/icon-nav-movies.svg"
-            alt="Movies"
-            width={20}
-            height={20}
-          />
-        </Link>
-        {/* TV Series */}
-        <Link
-          href="/tv-series"
-          className="text-[#5A698F] hover:text-[#FC4747] transition-colors"
-        >
-          <Image
-            src="/assets/icon-nav-tv-series.svg"
-            alt="TV Series"
-            width={20}
-            height={20}
-          />
-        </Link>
-        {/* Bookmarked */}
-        <Link
-          href="/bookmarked"
-          className="text-[#5A698F] hover:text-[#FC4747] transition-colors"
-        >
-          <Image
-            src="/assets/icon-nav-bookmark.svg"
-            alt="Bookmarked"
-            width={20}
-            height={20}
-          />
-        </Link>
+  // 3. Link verilerini bir diziye taşıyalım. Bu, kodu daha temiz ve yönetilebilir yapar.
+  const navLinks = [
+    { href: "/", title: "Home", icon: "/assets/icon-nav-home.svg" },
+    { href: "/movies", title: "Movies", icon: "/assets/icon-nav-movies.svg" },
+    {
+      href: "/tv-series",
+      title: "TV Series",
+      icon: "/assets/icon-nav-tv-series.svg",
+    },
+    {
+      href: "/bookmarked",
+      title: "Bookmarked",
+      icon: "/assets/icon-nav-bookmark.svg",
+    },
+  ];
+
+  // --- MASAÜSTÜ GÖRÜNÜMÜ ---
+  if (isDesktop) {
+    return (
+      <nav className="bg-blue h-full w-24 flex flex-col justify-between p-8 rounded-2xl mx-4">
+        <div className="flex flex-col items-center gap-10">
+          <div>
+            <Image src="/assets/logo.svg" alt="Logo" width={32} height={25} />
+          </div>
+          <div className="flex flex-col gap-8">
+            {navLinks.map((link) => (
+              <Link key={link.href} href={link.href} title={link.title}>
+                <Image
+                  src={link.icon}
+                  alt={`${link.title} Icon`}
+                  width={20}
+                  height={20}
+                  // 4. Aktifse özel filter sınıfını uygula
+                  className={
+                    pathname === link.href ? "brightness-0 invert" : ""
+                  }
+                />
+              </Link>
+            ))}
+          </div>
+        </div>
+        <div>
+          <div className="h-10 w-10 rounded-full border border-white">
+            <Image
+              src="/assets/image-avatar.png"
+              alt="Avatar"
+              width={40}
+              height={40}
+              className="rounded-full"
+            />
+          </div>
+        </div>
       </nav>
+    );
+  }
 
-      <div className="mt-0 md:mt-auto">
-        <Image
-          src="/assets/image-avatar.png"
-          alt="User Avatar"
-          width={32}
-          height={32}
-          className="rounded-full border-2 border-white"
-        />
+  // --- MOBİL GÖRÜNÜMÜ ---
+  return (
+    <nav className="bg-blue p-4 flex justify-between items-center">
+      <div>
+        <Image src="/assets/logo.svg" alt="Logo" width={25} height={20} />
       </div>
-    </aside>
+      <div className="flex gap-6">
+        {navLinks.map((link) => (
+          <Link key={link.href} href={link.href} title={link.title}>
+            <Image
+              src={link.icon}
+              alt={`${link.title} Icon`}
+              width={16}
+              height={16}
+              // 5. Aktifse özel filter sınıfını uygula (mobil için de)
+              className={pathname === link.href ? "brightness-0 invert" : ""}
+            />
+          </Link>
+        ))}
+      </div>
+      <div>
+        <div className="h-6 w-6 rounded-full border border-white">
+          <Image
+            src="/assets/image-avatar.png"
+            alt="Avatar"
+            width={24}
+            height={24}
+            className="rounded-full"
+          />
+        </div>
+      </div>
+    </nav>
   );
-}
+};
+
+export default Navbar;
