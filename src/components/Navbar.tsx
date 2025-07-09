@@ -4,14 +4,13 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation"; // 1. usePathname hook'unu import et
+import { usePathname } from "next/navigation";
 import useIsDesktop from "@/hooks/useIsDesktop";
 
 const Navbar = () => {
   const isDesktop = useIsDesktop();
-  const pathname = usePathname(); // 2. Mevcut sayfa yolunu al
+  const pathname = usePathname();
 
-  // 3. Link verilerini bir diziye taşıyalım. Bu, kodu daha temiz ve yönetilebilir yapar.
   const navLinks = [
     { href: "/", title: "Home", icon: "/assets/icon-nav-home.svg" },
     { href: "/movies", title: "Movies", icon: "/assets/icon-nav-movies.svg" },
@@ -27,7 +26,6 @@ const Navbar = () => {
     },
   ];
 
-  // --- MASAÜSTÜ GÖRÜNÜMÜ ---
   if (isDesktop) {
     return (
       <nav className="bg-blue h-full w-24 flex flex-col justify-between p-8 rounded-2xl mx-4">
@@ -43,7 +41,6 @@ const Navbar = () => {
                   alt={`${link.title} Icon`}
                   width={20}
                   height={20}
-                  // 4. Aktifse özel filter sınıfını uygula
                   className={
                     pathname === link.href ? "brightness-0 invert" : ""
                   }
@@ -67,7 +64,6 @@ const Navbar = () => {
     );
   }
 
-  // --- MOBİL GÖRÜNÜMÜ ---
   return (
     <nav className="bg-blue p-4 flex justify-between items-center">
       <div>
@@ -81,7 +77,6 @@ const Navbar = () => {
               alt={`${link.title} Icon`}
               width={16}
               height={16}
-              // 5. Aktifse özel filter sınıfını uygula (mobil için de)
               className={pathname === link.href ? "brightness-0 invert" : ""}
             />
           </Link>
