@@ -1,3 +1,4 @@
+// app/layout.tsx
 import type { Metadata } from "next";
 import { Outfit } from "next/font/google";
 import "./globals.css";
@@ -12,21 +13,20 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html lang="en">
-      <body
-        className={`${outfit.className} flex min-h-screen items-center justify-center bg-darkBlue text-white`}
-      >
-        <div className="h-[90vh] w-full">
-          <div className="flex h-full flex-col md:flex-row">
+      <body className={`${outfit.className} bg-darkBlue text-white`}>
+        <div className="md:flex md:h-screen">
+          <header>
             <Navbar />
-            <main className="flex-grow overflow-y-auto p-4 md:p-6 lg:p-0">
-              {children}
-            </main>
-          </div>
+          </header>
+
+          <main className="flex-1 overflow-y-auto">
+            <div className="p-4 md:p-6">{children}</div>
+          </main>
         </div>
       </body>
     </html>
