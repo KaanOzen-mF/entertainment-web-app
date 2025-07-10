@@ -2,6 +2,7 @@
 
 import Trending from "@/components/Trending";
 import data from "../../data.json";
+import Recommended from "@/components/Recommended";
 
 export default function Home() {
   const trendingData = data.filter((item) => item.isTrending);
@@ -13,6 +14,7 @@ export default function Home() {
       <Trending data={trendingData} />
 
       {/* Suggestion */}
+      <Recommended data={data} />
     </section>
   );
 }
