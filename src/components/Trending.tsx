@@ -4,29 +4,10 @@
 
 import { useRef } from "react"; // 1. useRef hook'unu import ediyoruz.
 import TrendingCard from "./TrendingCard";
-
-type TrendingData = {
-  title: string;
-  thumbnail: {
-    trending?: {
-      small: string;
-      large: string;
-    };
-    regular: {
-      small: string;
-      medium: string;
-      large: string;
-    };
-  };
-  year: number;
-  category: string;
-  rating: string;
-  isBookmarked: boolean;
-  isTrending: boolean;
-};
+import { MediaContent } from "../../types";
 
 type Props = {
-  data: TrendingData[];
+  data: MediaContent[];
 };
 
 const Trending = ({ data }: Props) => {
