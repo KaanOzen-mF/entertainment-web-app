@@ -1,30 +1,10 @@
 // src/components/TrendingCard.tsx
 
 import Image from "next/image";
-
-type TrendingItem = {
-  title: string;
-  thumbnail: {
-    // <- Bu zaten doğruymuş, kontrol ettim.
-    trending?: {
-      small: string;
-      large: string;
-    };
-    regular: {
-      small: string;
-      medium: string;
-      large: string;
-    };
-  };
-  year: number;
-  category: string;
-  rating: string;
-  isBookmarked: boolean;
-  isTrending: boolean;
-};
+import { MediaContent } from "../../types";
 
 type Props = {
-  item: TrendingItem;
+  item: MediaContent;
 };
 
 const TrendingCard = ({ item }: Props) => {
@@ -47,7 +27,10 @@ const TrendingCard = ({ item }: Props) => {
         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
         className="object-cover transition-transform duration-300 ease-in-out group-hover:scale-105"
       />
-      <div className="absolute top-4 right-4 z-20 bg-darkBlue/50 p-3 rounded-full flex items-center justify-center hover:bg-white transition-colors">
+      <div
+        className="group absolute top-4 right-4 z-20 bg-darkBlue/50 p-3 rounded-full flex items-center justify-center 
+                hover:bg-white transition-colors duration-300"
+      >
         <Image
           src={
             item.isBookmarked
@@ -57,6 +40,7 @@ const TrendingCard = ({ item }: Props) => {
           alt="Bookmark"
           width={12}
           height={14}
+          className="filter transition-all duration-200 group-hover:invert"
         />
       </div>
       <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
