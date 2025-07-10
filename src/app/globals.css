@@ -56,3 +56,10 @@
   /* Font Families */
   --font-family-outfit: "Outfit", sans-serif;
 }
+
+@layer base {
+  html,
+  body {
+    @apply h-full overflow-hidden;
+  }
+}
