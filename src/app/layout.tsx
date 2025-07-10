@@ -18,7 +18,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${outfit.className} bg-darkBlue text-white`}>
+      <body
+        className={`${outfit.className} bg-darkBlue text-white overflow-auto md:overflow-hidden`}
+      >
         <div className="md:flex md:h-screen">
           <header>
             <Navbar />
