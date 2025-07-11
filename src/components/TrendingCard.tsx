@@ -8,10 +8,8 @@ type Props = {
 };
 
 const TrendingCard = ({ item }: Props) => {
-  // 1. DÜZELTME: 'thumbnails' -> 'thumbnail' olarak değiştirildi.
   const imageUrl = item.thumbnail.trending?.large || "";
 
-  // 2. DÜZELTME: './' ile başlayan yolu '/' ile başlayacak şekilde düzeltiyoruz.
   const correctedImageUrl = imageUrl.slice(1);
   const correctedCategoryIcon =
     item.category === "Movie"
@@ -21,7 +19,7 @@ const TrendingCard = ({ item }: Props) => {
   return (
     <div className="group relative flex-shrink-0 min-w-[470px] h-[230px] rounded-lg overflow-hidden cursor-pointer">
       <Image
-        src={correctedImageUrl} // Düzeltilmiş yolu kullanıyoruz.
+        src={correctedImageUrl}
         alt={item.title}
         fill
         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
