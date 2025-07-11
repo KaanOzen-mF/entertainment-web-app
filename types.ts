@@ -1,5 +1,3 @@
-// src/types.ts
-
 export type MediaContent = {
   title: string;
   thumbnail: {
