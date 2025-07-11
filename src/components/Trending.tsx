@@ -1,8 +1,8 @@
 // src/components/Trending.tsx
 
-"use client"; // useRef ve event handler'lar kullanacağımız için client component olmalı.
+"use client";
 
-import { useRef } from "react"; // 1. useRef hook'unu import ediyoruz.
+import { useRef } from "react";
 import TrendingCard from "./TrendingCard";
 import { MediaContent } from "../../types";
 
@@ -11,13 +11,11 @@ type Props = {
 };
 
 const Trending = ({ data }: Props) => {
-  // 2. Kaydıracağımız div'e bir referans oluşturuyoruz.
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  // 3. Ok'lara tıklandığında çalışacak fonksiyon.
   const handleScroll = (direction: "left" | "right") => {
     if (scrollRef.current) {
-      const scrollAmount = 500; // Her tıklamada ne kadar kaydırılacağı (pixel)
+      const scrollAmount = 500;
       if (direction === "left") {
         scrollRef.current.scrollLeft -= scrollAmount;
       } else {
@@ -27,11 +25,9 @@ const Trending = ({ data }: Props) => {
   };
 
   return (
-    // 4. Ana konteynere 'relative' ekliyoruz ki okları buna göre konumlandıralım.
-    <section className="relative mt-6">
+    <section className="relative mt-8">
       <h1 className="text-xl font-light text-white mb-4">Trending</h1>
 
-      {/* 5. Navigasyon Okları */}
       <div className="absolute top-1/2 -translate-y-1/2 w-full flex justify-between px-4 z-20 pointer-events-none">
         <button
           onClick={() => handleScroll("left")}
@@ -48,7 +44,6 @@ const Trending = ({ data }: Props) => {
       </div>
 
       <div className="overflow-hidden">
-        {/* 6. Oluşturduğumuz referansı (ref) kaydırılacak div'e bağlıyoruz. */}
         <div
           ref={scrollRef}
           className="flex gap-10 overflow-x-auto pb-10 -mb-10 scroll-smooth"
