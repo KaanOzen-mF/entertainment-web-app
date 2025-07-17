@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { Outfit } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
+import { BookmarkProvider } from "@/context/BookmarkContext";
 
 const outfit = Outfit({ subsets: ["latin"], weight: ["300", "500"] });
 
@@ -21,15 +22,17 @@ export default function RootLayout({
       <body
         className={`${outfit.className} bg-darkBlue text-white overflow-auto md:overflow-hidden`}
       >
-        <div className="md:flex md:h-screen">
-          <header>
-            <Navbar />
-          </header>
+        <BookmarkProvider>
+          <div className="md:flex md:h-screen">
+            <header>
+              <Navbar />
+            </header>
 
-          <main className="flex-1 overflow-y-auto">
-            <div className="p-4 md:p-6">{children}</div>
-          </main>
-        </div>
+            <main className="flex-1 overflow-y-auto">
+              <div className="p-4 md:p-6">{children}</div>
+            </main>
+          </div>
+        </BookmarkProvider>
       </body>
     </html>
   );
