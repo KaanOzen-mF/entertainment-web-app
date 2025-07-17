@@ -1,13 +1,20 @@
 // src/components/ShowCard.tsx
 
+"use client";
+
 import Image from "next/image";
 import { MediaContent } from "../../types";
+import { useBookmarks } from "@/context/BookmarkContext";
 
 type Props = {
   item: MediaContent;
 };
 
 const ShowCard = ({ item }: Props) => {
+  const { bookmarkedTitles, toggleBookmark } = useBookmarks();
+
+  const isBookmarked = bookmarkedTitles.includes(item.title);
+
   const imageUrl = item.thumbnail.regular.large.slice(1);
   const categoryIcon =
     item.category === "Movie"
@@ -24,16 +31,15 @@ const ShowCard = ({ item }: Props) => {
           height={174}
           className="w-full h-auto"
         />
-
         <div className="absolute inset-0 bg-black/0 group-hover:bg-black/50 transition-colors duration-300"></div>
 
         <div
-          className="group absolute top-4 right-4 z-20 bg-darkBlue/50 p-3 rounded-full flex items-center justify-center 
-                hover:bg-white transition-colors duration-300"
+          onClick={() => toggleBookmark(item.title)}
+          className="group absolute top-4 right-4 z-20 bg-darkBlue/50 p-3 rounded-full flex items-center justify-center hover:bg-white transition-colors duration-300"
         >
           <Image
             src={
-              item.isBookmarked
+              isBookmarked
                 ? "/assets/icon-bookmark-full.svg"
                 : "/assets/icon-bookmark-empty.svg"
             }
