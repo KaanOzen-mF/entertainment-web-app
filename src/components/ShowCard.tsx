@@ -29,13 +29,14 @@ const ShowCard = ({ item }: Props) => {
           alt={item.title}
           width={280}
           height={174}
-          className="w-full h-auto"
+          className="w-full h-auto transition duration-300 group-hover:brightness-50"
         />
         <div className="absolute inset-0 bg-black/0 group-hover:bg-black/50 transition-colors duration-300"></div>
 
         <div
           onClick={() => toggleBookmark(item.title)}
-          className="group absolute top-4 right-4 z-20 bg-darkBlue/50 p-3 rounded-full flex items-center justify-center hover:bg-white transition-colors duration-300"
+          className="group absolute top-4 right-4 z-20 bg-lightBlue/80 p-3 rounded-full flex items-center justify-center
+                   hover:bg-white transition-colors duration-300"
         >
           <Image
             src={

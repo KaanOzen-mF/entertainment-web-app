@@ -20,7 +20,7 @@ const TrendingCard = ({ item }: Props) => {
       : "/assets/icon-category-tv.svg";
 
   return (
-    <div className="group relative flex-shrink-0 min-w-[470px] h-[230px] rounded-lg overflow-hidden cursor-pointer">
+    <div className="group relative flex-shrink-0 min-w-[340px] md:min-w-[420px] h-[230px] rounded-lg overflow-hidden cursor-pointer">
       <Image
         src={imageUrl}
         alt={item.title}
@@ -31,7 +31,7 @@ const TrendingCard = ({ item }: Props) => {
 
       <div
         onClick={() => toggleBookmark(item.title)}
-        className="absolute top-4 right-4 z-20 bg-darkBlue/50 p-3 rounded-full flex items-center justify-center hover:bg-white transition-colors"
+        className="absolute top-4 right-4 z-20 bg-lightBlue/80 p-3 rounded-full flex items-center justify-center hover:bg-blue transition-colors"
       >
         <Image
           src={
