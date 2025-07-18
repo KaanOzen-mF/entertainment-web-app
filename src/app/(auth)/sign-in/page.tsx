@@ -24,7 +24,7 @@ const LoginPage = () => {
           />
           <button
             type="submit"
-            className="bg-red text-white p-4 rounded-md mt-4 hover:bg-white hover:text-black transition-colors"
+            className="bg-red text-white p-4 rounded-md mt-4 hover:bg-white hover:text-black transition-colors hover:cursor-pointer"
           >
             Sign In to your account
           </button>
