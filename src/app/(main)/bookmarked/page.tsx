@@ -9,7 +9,6 @@ import { useBookmarks } from "@/context/BookmarkContext";
 const BookmarkedPage = () => {
   const { bookmarkedTitles } = useBookmarks();
 
-  // 3. Tüm veri içinde, başlığı bizim favoriler listemizde olanları filtreliyoruz.
   const bookmarkedItems = data.filter((item) =>
     bookmarkedTitles.includes(item.title)
   ) as MediaContent[];
