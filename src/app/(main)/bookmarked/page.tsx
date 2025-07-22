@@ -1,7 +1,7 @@
 // src/app/bookmarked/page.tsx
 "use client";
 
-import data from "../../../../data.json";
+/*import data from "../../../../data.json";
 import { MediaContent } from "../../../../types";
 import MediaGrid from "@/components/MediaGrid";
 import { useBookmarks } from "@/context/BookmarkContext";
@@ -23,3 +23,4 @@ const BookmarkedPage = () => {
 };
 
 export default BookmarkedPage;
+*/
