@@ -1,19 +1,15 @@
 export type MediaContent = {
-  title: string;
-  thumbnail: {
-    trending?: {
-      small: string;
-      large: string;
-    };
-    regular: {
-      small: string;
-      medium: string;
-      large: string;
-    };
-  };
-  year: number;
-  category: string;
-  rating: string;
-  isBookmarked: boolean;
-  isTrending: boolean;
+  id: number;
+  title?: string;
+  name?: string;
+  release_date?: string;
+  first_air_date?: string;
+  media_type: "movie" | "tv" | "person";
+  backdrop_path: string;
+  poster_path: string;
+  vote_average: number;
+  overview: string;
+  genre_ids: number[];
+
+  isBookmarked?: boolean;
 };
