@@ -11,22 +11,25 @@ type Props = {
 };
 
 const ShowCard = ({ item }: Props) => {
-  const { bookmarkedTitles, toggleBookmark } = useBookmarks();
+  const { bookmarkedTmdbIds, toggleBookmark } = useBookmarks();
+  const isBookmarked = bookmarkedTmdbIds.includes(item.id);
 
-  const isBookmarked = bookmarkedTitles.includes(item.title);
-
-  const imageUrl = item.thumbnail.regular.large.slice(1);
+  const imageUrl = `https://image.tmdb.org/t/p/w500${item.poster_path}`;
   const categoryIcon =
-    item.category === "Movie"
+    item.media_type === "movie"
       ? "/assets/icon-category-movie.svg"
       : "/assets/icon-category-tv.svg";
+
+  const title = item.title || item.name;
+  const releaseDate = item.release_date || item.first_air_date;
+  const year = releaseDate ? new Date(releaseDate).getFullYear() : "N/A";
 
   return (
     <div className="group flex flex-col gap-2 cursor-pointer">
       <div className="relative rounded-lg overflow-hidden">
         <Image
           src={imageUrl}
-          alt={item.title}
+          alt={title || "Media Image"}
           width={280}
           height={174}
           className="w-full h-auto transition duration-300 group-hover:brightness-50"
@@ -34,7 +37,7 @@ const ShowCard = ({ item }: Props) => {
         <div className="absolute inset-0 bg-black/0 group-hover:bg-black/50 transition-colors duration-300"></div>
 
         <div
-          onClick={() => toggleBookmark(item.title)}
+          onClick={() => toggleBookmark(item)}
           className="group absolute top-4 right-4 z-20 bg-lightBlue/80 p-3 rounded-full flex items-center justify-center
                    hover:bg-white transition-colors duration-300"
         >
@@ -66,14 +69,14 @@ const ShowCard = ({ item }: Props) => {
 
       <div className="text-white">
         <div className="flex items-center gap-2 text-white/75 text-text5">
-          <span>{item.year}</span>
+          <span>{year}</span>
           <span>•</span>
           <div className="flex items-center gap-1">
             <Image src={categoryIcon} alt="Category" width={12} height={12} />
-            <span>{item.category}</span>
+            <span>{item.media_type === "movie" ? "Movie" : "TV Show"}</span>
           </div>
           <span>•</span>
-          <span>{item.rating}</span>
+          <span>{item.vote_average.toFixed(1)}</span>
         </div>
         <h3 className="text-text3 font-bold mt-1">{item.title}</h3>
       </div>
