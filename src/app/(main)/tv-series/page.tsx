@@ -1,24 +1,32 @@
+// src/app/(main)/tv-series/page.tsx
+"use client";
+
+import { useState, useEffect } from "react";
 import { MediaContent } from "../../../../types";
 import MediaGrid from "@/components/MediaGrid";
+import { fetchDiscoverTv } from "@/lib/api"; // Correct function imported
 
-async function getTvSeries() {
-  try {
-    const response = await fetch(
-      "http://localhost:8080/api/v1/media?category=TV%20Series",
-      {
-        cache: "no-store",
+const TvSeriesPage = () => {
+  const [tvSeries, setTvSeries] = useState<MediaContent[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const getTvSeries = async () => {
+      try {
+        const tvSeriesData = await fetchDiscoverTv(); // Correct function called
+        setTvSeries(tvSeriesData);
+      } catch (error) {
+        console.error("Failed to fetch TV series:", error);
+      } finally {
+        setIsLoading(false);
       }
-    );
-    if (!response.ok) return [];
-    return response.json();
-  } catch (error) {
-    console.error("Failed to fetch TV series:", error);
-    return [];
-  }
-}
+    };
+    getTvSeries();
+  }, []);
 
-export default async function TvSeriesPage() {
-  const tvSeries: MediaContent[] = await getTvSeries();
+  if (isLoading) {
+    return <p className="text-white p-6">Loading TV series...</p>;
+  }
 
   return (
     <MediaGrid
@@ -27,4 +35,6 @@ export default async function TvSeriesPage() {
       searchPlaceholder="Search for TV series"
     />
   );
-}
+};
+
+export default TvSeriesPage;
