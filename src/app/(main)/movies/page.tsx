@@ -1,24 +1,32 @@
+// src/app/(main)/movies/page.tsx
+"use client";
+
+import { useState, useEffect } from "react";
 import { MediaContent } from "../../../../types";
 import MediaGrid from "@/components/MediaGrid";
+import { fetchDiscoverMovies } from "@/lib/api"; // Correct function imported
 
-async function getMovies() {
-  try {
-    const response = await fetch(
-      "http://localhost:8080/api/v1/media?category=Movie",
-      {
-        cache: "no-store",
+const MoviesPage = () => {
+  const [movies, setMovies] = useState<MediaContent[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const getMovies = async () => {
+      try {
+        const movieData = await fetchDiscoverMovies(); // Correct function called
+        setMovies(movieData);
+      } catch (error) {
+        console.error("Failed to fetch movies:", error);
+      } finally {
+        setIsLoading(false);
       }
-    );
-    if (!response.ok) return [];
-    return response.json();
-  } catch (error) {
-    console.error("Failed to fetch movies:", error);
-    return [];
-  }
-}
+    };
+    getMovies();
+  }, []);
 
-export default async function MoviesPage() {
-  const movies: MediaContent[] = await getMovies();
+  if (isLoading) {
+    return <p className="text-white p-6">Loading movies...</p>;
+  }
 
   return (
     <MediaGrid
@@ -27,4 +35,6 @@ export default async function MoviesPage() {
       searchPlaceholder="Search for movies"
     />
   );
-}
+};
+
+export default MoviesPage;
