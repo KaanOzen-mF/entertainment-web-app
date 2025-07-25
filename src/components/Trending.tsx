@@ -49,7 +49,7 @@ const Trending = ({ data }: Props) => {
           className="flex gap-10 overflow-x-auto pb-10 -mb-10 scroll-smooth"
         >
           {data.map((item) => (
-            <TrendingCard key={item.title} item={item} />
+            <TrendingCard key={item.id} item={item} />
           ))}
         </div>
       </div>
