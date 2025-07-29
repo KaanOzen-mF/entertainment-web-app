@@ -1,31 +1,61 @@
 // src/components/MediaGrid.tsx
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { MediaContent } from "../../types";
 import ShowCard from "@/components/ShowCard";
 import SearchInput from "@/components/SearchInput";
 import useDebounce from "@/hooks/useDebounce";
+import { searchMovies, searchTvShows } from "@/lib/api";
+import LoadingSpinner from "./LoadingSpinner";
 
 type Props = {
-  data: MediaContent[];
+  initialData: MediaContent[];
   pageTitle: string;
   searchPlaceholder: string;
+  mediaType?: "movie" | "tv";
 };
 
-const MediaGrid = ({ data, pageTitle, searchPlaceholder }: Props) => {
+const MediaGrid = ({
+  initialData,
+  pageTitle,
+  searchPlaceholder,
+  mediaType,
+}: Props) => {
+  const [displayedData, setDisplayedData] = useState(initialData);
   const [searchTerm, setSearchTerm] = useState("");
+  const [isSearching, setIsSearching] = useState(false);
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
+
+  useEffect(() => {
+    const performSearch = async () => {
+      if (debouncedSearchTerm) {
+        setIsSearching(true);
+        let results = [];
+
+        if (mediaType === "movie") {
+          results = await searchMovies(debouncedSearchTerm);
+        } else if (mediaType === "tv") {
+          results = await searchTvShows(debouncedSearchTerm);
+        } else {
+          results = initialData.filter((item) =>
+            (item.title || item.name || "")
+              .toLowerCase()
+              .includes(debouncedSearchTerm.toLowerCase())
+          );
+        }
+        setDisplayedData(results);
+        setIsSearching(false);
+      } else {
+        setDisplayedData(initialData);
+      }
+    };
+    performSearch();
+  }, [debouncedSearchTerm, initialData, mediaType]);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
   };
-
-  const filteredData = debouncedSearchTerm
-    ? data.filter((item) =>
-        item.title.toLowerCase().includes(debouncedSearchTerm.toLowerCase())
-      )
-    : data;
 
   return (
     <section>
@@ -37,15 +67,19 @@ const MediaGrid = ({ data, pageTitle, searchPlaceholder }: Props) => {
 
       <h1 className="text-xl font-light text-white mb-6">
         {debouncedSearchTerm
-          ? `Found ${filteredData.length} results for '${debouncedSearchTerm}'`
+          ? `Found ${displayedData.length} results for '${debouncedSearchTerm}'`
           : pageTitle}
       </h1>
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-8">
-        {filteredData.map((item) => (
-          <ShowCard key={item.title} item={item} />
-        ))}
-      </div>
+      {isSearching ? (
+        <LoadingSpinner />
+      ) : (
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-8">
+          {displayedData.map(
+            (item) => item && <ShowCard key={item.id} item={item} />
+          )}
+        </div>
+      )}
     </section>
   );
 };
