@@ -6,6 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import useIsDesktop from "@/hooks/useIsDesktop";
+import { useBookmarks } from "@/context/BookmarkContext";
 
 const navLinks = [
   { href: "/", title: "Home", icon: "/assets/icon-nav-home.svg" },
@@ -23,13 +24,12 @@ const navLinks = [
 ];
 
 const Navbar = () => {
-  const isDesktop = useIsDesktop(); // Ekran boyutunu kontrol eden hook'umuz
+  const isDesktop = useIsDesktop();
   const pathname = usePathname();
+  const { logout } = useBookmarks();
 
-  // --- EĞER MASAÜSTÜ İSE ---
   if (isDesktop) {
     return (
-      // Kırmızı kutu: Navbar'ı saran ve boşlukları (padding) veren header.
       <header className="p-8">
         <nav className="bg-blue h-[calc(100vh-64px)] w-24 flex flex-col justify-between p-8 rounded-2xl">
           <div className="flex flex-col items-center gap-10">
@@ -52,7 +52,7 @@ const Navbar = () => {
               ))}
             </div>
           </div>
-          <div>
+          <div className="flex flex-col items-center gap-4">
             <div className="h-10 w-10 rounded-full border border-white">
               <Image
                 src="/assets/image-avatar.png"
@@ -62,13 +62,19 @@ const Navbar = () => {
                 className="rounded-full"
               />
             </div>
+            <button
+              onClick={logout}
+              className="text-white/75 hover:text-white hover:bg-red/80 hover:cursor-pointer transition-colors text-sm bg-red p-2 rounded-lg"
+              title="Logout"
+            >
+              Logout
+            </button>
           </div>
         </nav>
       </header>
     );
   }
 
-  // --- EĞER MOBİL VEYA TABLET İSE ---
   return (
     <header>
       <nav className="bg-blue p-4 flex justify-between items-center">
