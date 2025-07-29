@@ -2,25 +2,23 @@ import { MediaContent } from "../../types";
 
 const API_PROXY_URL = "/api/tmdb";
 
-type TmdbApiResponse = {
-  page: number;
-  results: MediaContent[];
-  total_pages: number;
-  total_results: number;
-};
-
-const fetchFromTmdb = async (path: string): Promise<MediaContent[]> => {
+const fetchFromTmdb = async (path: string) => {
   try {
     const response = await fetch(`${API_PROXY_URL}/${path}`);
     if (!response.ok) {
-      throw new Error("Failed to fetch data from TMDB proxy");
+      throw new Error("Proxy request failed: " + response.statusText);
     }
-    const data: TmdbApiResponse = await response.json();
+    const data = await response.json();
+    if (data.results) {
+      return data.results.filter(
+        (item: MediaContent) => item.media_type !== "person"
+      );
+    }
 
-    return data.results.filter((item) => item.media_type !== "person");
+    return data;
   } catch (error) {
-    console.error(error);
-    return [];
+    console.error(`[TMDB Fetch] CATCH BLOK. Path: ${path}, Hata:`, error);
+    return null;
   }
 };
 
@@ -53,10 +51,12 @@ const authenticatedFetch = async (
     }
     throw new Error(response.statusText);
   }
-
-  if (response.status !== 204) {
+  const contentType = response.headers.get("content-type");
+  if (contentType && contentType.includes("application/json")) {
     return response.json();
   }
+
+  return;
 };
 
 export const fetchTrendingAllWeek = () => fetchFromTmdb("trending/all/week");
@@ -74,4 +74,15 @@ export const addBookmark = (tmdbId: number): Promise<void> => {
 };
 export const deleteBookmark = (tmdbId: number): Promise<void> => {
   return authenticatedFetch(`/bookmarks/${tmdbId}`, { method: "DELETE" });
+};
+export const fetchMediaDetails = (mediaType: "movie" | "tv", id: number) => {
+  return fetchFromTmdb(`${mediaType}/${id}`);
+};
+
+export const searchMovies = (query: string) => {
+  return fetchFromTmdb(`search/movie?query=${encodeURIComponent(query)}`);
+};
+
+export const searchTvShows = (query: string) => {
+  return fetchFromTmdb(`search/tv?query=${encodeURIComponent(query)}`);
 };
