@@ -5,10 +5,11 @@ const TMDB_API_URL = "https://api.themoviedb.org/3";
 
 export async function GET(
   request: Request,
-  { params }: { params: { tmdbPath: string[] } }
+  context: { params: Promise<{ tmdbPath?: string[] }> }
 ) {
   const { searchParams } = new URL(request.url);
-  const path = params.tmdbPath ? params.tmdbPath.join("/") : "";
+  const { tmdbPath } = await context.params;
+  const path = tmdbPath ? tmdbPath.join("/") : "";
 
   const url = new URL(`${TMDB_API_URL}/${path}`);
   url.searchParams.append("api_key", TMDB_API_KEY || "");
@@ -28,7 +29,8 @@ export async function GET(
     }
     const data = await response.json();
     return NextResponse.json(data);
-  } catch {
+  } catch (error) {
+    console.error("TMDB Proxy Error:", error);
     return NextResponse.json(
       { error: "Failed to fetch data from TMDB" },
       { status: 500 }
