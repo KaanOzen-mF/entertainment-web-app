@@ -1,65 +1,42 @@
+// src/app/(main)/bookmarked/page.tsx
 "use client";
 
-import { useEffect, useState } from "react";
-import { MediaContent } from "../../../../types";
-import MediaGrid from "@/components/MediaGrid";
-import { useBookmarks } from "@/context/BookmarkContext";
-import { fetchMediaDetails } from "@/lib/api";
+import { useAuth } from "@/context/AuthContext";
+import BookmarkedContext from "@/components/BookmarkedContent";
 import LoadingSpinner from "@/components/LoadingSpinner";
+import Link from "next/link";
 
 const BookmarkedPage = () => {
-  const { bookmarkedTmdbIds, isLoading: areBookmarksLoading } = useBookmarks();
-  const [bookmarkedItems, setBookmarkedItems] = useState<MediaContent[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const { isAuthenticated, isLoading } = useAuth();
 
-  useEffect(() => {
-    if (areBookmarksLoading) {
-      return;
-    }
-
-    const fetchBookmarkedDetails = async () => {
-      if (bookmarkedTmdbIds.length === 0) {
-        setBookmarkedItems([]);
-        setIsLoading(false);
-        return;
-      }
-
-      try {
-        const promises = bookmarkedTmdbIds.map((id) =>
-          fetchMediaDetails("movie", id)
-            .catch(() => fetchMediaDetails("tv", id))
-            .catch(() => {
-              return null;
-            })
-        );
-
-        const results = await Promise.all(promises);
-
-        const validItems = results.filter(
-          (item): item is MediaContent => item !== null
-        );
-        setBookmarkedItems(validItems);
-      } catch (error) {
-        console.error(error);
-        setBookmarkedItems([]);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchBookmarkedDetails();
-  }, [bookmarkedTmdbIds, areBookmarksLoading]);
-
-  if (isLoading || areBookmarksLoading) {
+  if (isLoading) {
     return <LoadingSpinner />;
   }
 
   return (
-    <MediaGrid
-      initialData={bookmarkedItems}
-      pageTitle="Bookmarked Shows"
-      searchPlaceholder="Search in your bookmarked shows"
-    />
+    <section>
+      {isAuthenticated ? (
+        <BookmarkedContext />
+      ) : (
+        <div>
+          <h2 className="text-xl font-light text-white mb-4">
+            Bookmarked Shows
+          </h2>
+          <div className="bg-blue p-8 rounded-lg text-center">
+            <p className="text-white/75">
+              To see your bookmarked shows, please{" "}
+              <Link
+                href="/login"
+                className="text-red underline hover:text-white transition-colors"
+              >
+                log in
+              </Link>
+              .
+            </p>
+          </div>
+        </div>
+      )}
+    </section>
   );
 };
 
