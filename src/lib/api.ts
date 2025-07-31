@@ -86,3 +86,42 @@ export const searchMovies = (query: string) => {
 export const searchTvShows = (query: string) => {
   return fetchFromTmdb(`search/tv?query=${encodeURIComponent(query)}`);
 };
+
+type VideoResult = {
+  iso_639_1: string;
+  iso_3166_1: string;
+  name: string;
+  key: string;
+  site: string;
+  size: number;
+  type: string;
+  official: boolean;
+  published_at: string;
+  id: string;
+};
+
+type VideoApiResponse = {
+  id: number;
+  results: VideoResult[];
+};
+
+export const fetchTrailerKey = async (
+  mediaType: "movie" | "tv",
+  id: number
+): Promise<string | null> => {
+  try {
+    const data: VideoApiResponse = await fetchFromTmdb(
+      `${mediaType}/${id}/videos`
+    );
+
+    const trailer = data.results.find(
+      (video) =>
+        video.type === "Trailer" && video.site === "YouTube" && video.official
+    );
+
+    return trailer ? trailer.key : null;
+  } catch (error) {
+    console.error(`Failed to fetch trailer for ${mediaType} ID ${id}:`, error);
+    return null;
+  }
+};
