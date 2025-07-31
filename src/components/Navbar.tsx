@@ -6,7 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import useIsDesktop from "@/hooks/useIsDesktop";
-import { useBookmarks } from "@/context/BookmarkContext";
+import { useAuth } from "@/context/AuthContext";
 
 const navLinks = [
   { href: "/", title: "Home", icon: "/assets/icon-nav-home.svg" },
@@ -26,7 +26,7 @@ const navLinks = [
 const Navbar = () => {
   const isDesktop = useIsDesktop();
   const pathname = usePathname();
-  const { logout } = useBookmarks();
+  const { isAuthenticated, logout } = useAuth();
 
   if (isDesktop) {
     return (
@@ -53,22 +53,33 @@ const Navbar = () => {
             </div>
           </div>
           <div className="flex flex-col items-center gap-4">
-            <div className="h-10 w-10 rounded-full border border-white">
-              <Image
-                src="/assets/image-avatar.png"
-                alt="Avatar"
-                width={40}
-                height={40}
-                className="rounded-full"
-              />
-            </div>
-            <button
-              onClick={logout}
-              className="text-white/75 hover:text-white hover:bg-red/80 hover:cursor-pointer transition-colors text-sm bg-red p-2 rounded-lg"
-              title="Logout"
-            >
-              Logout
-            </button>
+            {isAuthenticated ? (
+              <>
+                <div className="h-10 w-10 rounded-full border border-white">
+                  <Image
+                    src="/assets/image-avatar.png"
+                    alt="Avatar"
+                    width={40}
+                    height={40}
+                    className="rounded-full"
+                  />
+                </div>
+                <button
+                  onClick={logout}
+                  className="text-white/75 hover:text-white hover:bg-red/80 hover:cursor-pointer transition-colors text-sm bg-red p-2 rounded-lg"
+                  title="Logout"
+                >
+                  Logout
+                </button>
+              </>
+            ) : (
+              <Link
+                href="/login"
+                className="bg-red text-white text-sm px-4 py-2 rounded-lg hover:bg-white hover:text-black transition-colors"
+              >
+                Login
+              </Link>
+            )}
           </div>
         </nav>
       </header>
@@ -95,15 +106,24 @@ const Navbar = () => {
           ))}
         </div>
         <div>
-          <div className="h-6 w-6 rounded-full border border-white">
-            <Image
-              src="/assets/image-avatar.png"
-              alt="Avatar"
-              width={24}
-              height={24}
-              className="rounded-full"
-            />
-          </div>
+          {isAuthenticated ? (
+            <div className="h-6 w-6 rounded-full border border-white">
+              <Image
+                src="/assets/image-avatar.png"
+                alt="Avatar"
+                width={24}
+                height={24}
+                className="rounded-full"
+              />
+            </div>
+          ) : (
+            <Link
+              href="/login"
+              className="bg-red text-white text-sm px-4 py-2 rounded-lg hover:bg-white hover:text-black transition-colors"
+            >
+              Login
+            </Link>
+          )}
         </div>
       </nav>
     </header>
