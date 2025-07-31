@@ -7,16 +7,16 @@ import React, {
   useContext,
   ReactNode,
   useEffect,
+  useCallback,
 } from "react";
-import { useRouter } from "next/navigation";
 import { addBookmark, deleteBookmark, fetchBookmarks } from "@/lib/api";
 import { MediaContent } from "../../types";
+import { useAuth } from "./AuthContext";
 
 interface BookmarkContextType {
   bookmarkedTmdbIds: number[];
   toggleBookmark: (item: MediaContent) => Promise<void>;
   isLoading: boolean;
-  logout: () => void;
 }
 
 const BookmarkContext = createContext<BookmarkContextType | undefined>(
@@ -26,20 +26,17 @@ const BookmarkContext = createContext<BookmarkContextType | undefined>(
 export const BookmarkProvider = ({ children }: { children: ReactNode }) => {
   const [bookmarkedTmdbIds, setBookmarkedTmdbIds] = useState<number[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const router = useRouter();
+  const { isAuthenticated } = useAuth();
 
-  const getBookmarks = async () => {
-    if (!localStorage.getItem("authToken")) {
+  const getBookmarks = useCallback(async () => {
+    if (!isAuthenticated) {
       setIsLoading(false);
+      setBookmarkedTmdbIds([]);
       return;
     }
     setIsLoading(true);
     try {
       const bookmarkIds = await fetchBookmarks();
-      console.log(
-        "[BookmarkContext] Fetched bookmark IDs from backend:",
-        bookmarkIds
-      );
       setBookmarkedTmdbIds(bookmarkIds);
     } catch (error) {
       console.error("Failed to fetch bookmarks:", error);
@@ -47,44 +44,34 @@ export const BookmarkProvider = ({ children }: { children: ReactNode }) => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [isAuthenticated]); // useCallback'in bağımlılığı
 
   useEffect(() => {
     getBookmarks();
-  }, []);
+  }, [isAuthenticated, getBookmarks]);
 
   const toggleBookmark = async (itemToToggle: MediaContent) => {
-    const isCurrentlyBookmarked = bookmarkedTmdbIds.includes(itemToToggle.id);
-    const originalBookmarks = [...bookmarkedTmdbIds];
+    if (!isAuthenticated) {
+      return;
+    }
 
+    const isCurrentlyBookmarked = bookmarkedTmdbIds.includes(itemToToggle.id);
     try {
       if (isCurrentlyBookmarked) {
-        setBookmarkedTmdbIds((prev) =>
-          prev.filter((id) => id !== itemToToggle.id)
-        );
         await deleteBookmark(itemToToggle.id);
       } else {
-        setBookmarkedTmdbIds((prev) => [...prev, itemToToggle.id]);
         await addBookmark(itemToToggle.id);
       }
-
-      const updatedBookmarks = await fetchBookmarks();
-      setBookmarkedTmdbIds(updatedBookmarks);
+      await getBookmarks();
     } catch (error) {
-      console.error("Failed to toggle bookmark, reverting UI.", error);
-      setBookmarkedTmdbIds(originalBookmarks);
+      console.error("Failed to toggle bookmark:", error);
+      await getBookmarks();
     }
-  };
-
-  const logout = () => {
-    localStorage.removeItem("authToken");
-    setBookmarkedTmdbIds([]);
-    router.push("/login");
   };
 
   return (
     <BookmarkContext.Provider
-      value={{ bookmarkedTmdbIds, toggleBookmark, isLoading, logout }}
+      value={{ bookmarkedTmdbIds, toggleBookmark, isLoading }}
     >
       {children}
     </BookmarkContext.Provider>
