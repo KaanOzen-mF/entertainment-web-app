@@ -9,11 +9,14 @@ import Recommended from "@/components/Recommended";
 import ShowCard from "@/components/ShowCard";
 import { fetchTrendingAllWeek, fetchDiscoverMovies } from "@/lib/api";
 import LoadingSpinner from "@/components/LoadingSpinner";
+import { useAuth } from "@/context/AuthContext";
+import Link from "next/link";
 
 export default function Home() {
   const [trendingData, setTrendingData] = useState<MediaContent[]>([]);
   const [recommendedData, setRecommendedData] = useState<MediaContent[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const { isAuthenticated } = useAuth();
 
   const [searchTerm, setSearchTerm] = useState("");
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
@@ -80,7 +83,29 @@ export default function Home() {
       ) : (
         <>
           <Trending data={trendingData} />
-          <Recommended data={recommendedData} />
+          {isAuthenticated ? (
+            // Eğer kullanıcı giriş yapmışsa, normal Recommended bölümünü göster
+            <Recommended data={recommendedData} />
+          ) : (
+            // Eğer giriş yapmamışsa, bu uyarıyı göster
+            <div className="mt-6">
+              <h2 className="text-xl font-light text-white mb-4">
+                Recommended for you
+              </h2>
+              <div className="bg-blue p-8 rounded-lg text-center">
+                <p className="text-white/75">
+                  To see personalized recommendations, please{" "}
+                  <Link
+                    href="/login"
+                    className="text-red underline hover:text-white transition-colors"
+                  >
+                    log in
+                  </Link>
+                  .
+                </p>
+              </div>
+            </div>
+          )}
         </>
       )}
     </main>
