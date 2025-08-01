@@ -91,14 +91,14 @@ const LoginPage = () => {
           {error && <p className="text-red mt-2">{error}</p>}
           <button
             type="submit"
-            className="bg-red text-white p-4 rounded-md mt-4 hover:bg-white hover:text-black transition-colors"
+            className="bg-red text-white p-4 rounded-md mt-4 hover:bg-white hover:text-black transition-colors cursor-pointer"
           >
             Login to your account
           </button>
         </form>
         <p className="text-center mt-6 text-white">
           Don&apos;t have an account?{" "}
-          <Link href="/signup" className="text-red">
+          <Link href="/register" className="text-red">
             Sign Up
           </Link>
         </p>
