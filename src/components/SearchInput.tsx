@@ -3,12 +3,19 @@
 
 import Image from "next/image";
 
+/**
+ * Defines the props accepted by the SearchInput component.
+ */
 type Props = {
-  placeholder: string;
-  value: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  placeholder: string; // The placeholder text to display in the input field.
+  value: string; // The current value of the input field, controlled by the parent component.
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void; // The function to call when the input value changes.
 };
 
+/**
+ * A reusable search input component that includes a search icon
+ * and styled input field.
+ */
 const SearchInput = ({ placeholder, value, onChange }: Props) => {
   return (
     <div className="flex items-center gap-4 w-full mb-6 mt-8">

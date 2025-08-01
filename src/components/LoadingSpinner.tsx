@@ -1,5 +1,3 @@
-// src/components/LoadingSpinner.tsx
-
 const LoadingSpinner = () => {
   return (
     <div className="flex justify-center items-center w-full pt-80">
