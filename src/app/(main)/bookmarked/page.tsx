@@ -1,42 +1,70 @@
 // src/app/(main)/bookmarked/page.tsx
 "use client";
 
-import { useAuth } from "@/context/AuthContext";
-import BookmarkedContext from "@/components/BookmarkedContent";
+import { useEffect, useState } from "react";
+import { MediaContent } from "../../../../types";
+import MediaGrid from "@/components/MediaGrid";
+import { useBookmarks } from "@/context/BookmarkContext";
+import { fetchMediaDetails } from "@/lib/api";
 import LoadingSpinner from "@/components/LoadingSpinner";
-import Link from "next/link";
 
 const BookmarkedPage = () => {
-  const { isAuthenticated, isLoading } = useAuth();
+  const { bookmarkedTmdbIds, isLoading: areBookmarksLoading } = useBookmarks();
+  const [bookmarkedItems, setBookmarkedItems] = useState<MediaContent[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  if (isLoading) {
+  useEffect(() => {
+    const fetchBookmarkedDetails = async () => {
+      if (areBookmarksLoading) return;
+      if (bookmarkedTmdbIds.length === 0) {
+        setBookmarkedItems([]);
+        setIsLoading(false);
+        return;
+      }
+
+      try {
+        const promises = bookmarkedTmdbIds.map(async (id) => {
+          let details = await fetchMediaDetails("movie", id);
+          if (details) {
+            return { ...details, media_type: "movie" as const };
+          }
+          details = await fetchMediaDetails("tv", id);
+          if (details) {
+            return { ...details, media_type: "tv" as const };
+          }
+          console.warn(`Could not fetch details for ID: ${id}`);
+          return null;
+        });
+
+        const results = await Promise.all(promises);
+        const validItems = results.filter(
+          (item): item is MediaContent => item !== null
+        );
+        setBookmarkedItems(validItems);
+      } catch (error) {
+        console.error(
+          "An unexpected error occurred while fetching bookmarked details:",
+          error
+        );
+        setBookmarkedItems([]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchBookmarkedDetails();
+  }, [bookmarkedTmdbIds, areBookmarksLoading]);
+
+  if (isLoading || areBookmarksLoading) {
     return <LoadingSpinner />;
   }
 
   return (
-    <section>
-      {isAuthenticated ? (
-        <BookmarkedContext />
-      ) : (
-        <div>
-          <h2 className="text-xl font-light text-white mb-4">
-            Bookmarked Shows
-          </h2>
-          <div className="bg-blue p-8 rounded-lg text-center">
-            <p className="text-white/75">
-              To see your bookmarked shows, please{" "}
-              <Link
-                href="/login"
-                className="text-red underline hover:text-white transition-colors"
-              >
-                log in
-              </Link>
-              .
-            </p>
-          </div>
-        </div>
-      )}
-    </section>
+    <MediaGrid
+      initialData={bookmarkedItems}
+      pageTitle="Bookmarked Shows"
+      searchPlaceholder="Search in your bookmarked shows"
+    />
   );
 };
 
