@@ -1,3 +1,4 @@
+// src/components/ShowCard.tsx
 "use client";
 
 import Image from "next/image";
@@ -32,7 +33,7 @@ const ShowCard = ({ item }: Props) => {
     item.media_type === "movie"
       ? "/assets/icon-category-movie.svg"
       : "/assets/icon-category-tv.svg";
-  //    - Use 'title' for movies and 'name' for TV shows.
+  //    - Use 'title' for movies and 'name' for TV shows. This is crucial.
   const title = item.title || item.name;
   const releaseDate = item.release_date || item.first_air_date;
   const year = releaseDate ? new Date(releaseDate).getFullYear() : "N/A";
@@ -103,6 +104,7 @@ const ShowCard = ({ item }: Props) => {
           {/* Display the vote average with one decimal place. */}
           <span>{item.vote_average.toFixed(1)}</span>
         </div>
+        {/* FIX: Use the 'title' variable which correctly handles both movies and TV shows. */}
         <h3 className="text-text3 font-bold mt-1">{title}</h3>
       </div>
     </div>
