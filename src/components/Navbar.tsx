@@ -55,7 +55,7 @@ const Navbar = () => {
           <div className="flex flex-col items-center gap-4">
             {isAuthenticated ? (
               <>
-                <div className="h-10 w-10 rounded-full border border-white">
+                <div className="h-10 w-10 rounded-full border">
                   <Image
                     src="/assets/image-avatar.png"
                     alt="Avatar"
