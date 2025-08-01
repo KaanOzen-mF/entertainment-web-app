@@ -1,4 +1,4 @@
-import { MediaContent } from "../../types";
+import { MediaContent, VideoResult } from "../../types";
 
 const API_PROXY_URL = "/api/tmdb";
 
@@ -87,34 +87,16 @@ export const searchTvShows = (query: string) => {
   return fetchFromTmdb(`search/tv?query=${encodeURIComponent(query)}`);
 };
 
-type VideoResult = {
-  iso_639_1: string;
-  iso_3166_1: string;
-  name: string;
-  key: string;
-  site: string;
-  size: number;
-  type: string;
-  official: boolean;
-  published_at: string;
-  id: string;
-};
-
-type VideoApiResponse = {
-  id: number;
-  results: VideoResult[];
-};
-
 export const fetchTrailerKey = async (
   mediaType: "movie" | "tv",
   id: number
 ): Promise<string | null> => {
   try {
-    const data: VideoApiResponse = await fetchFromTmdb(
+    const videos: VideoResult[] = await fetchFromTmdb(
       `${mediaType}/${id}/videos`
     );
 
-    const trailer = data.results.find(
+    const trailer = videos.find(
       (video) =>
         video.type === "Trailer" && video.site === "YouTube" && video.official
     );
