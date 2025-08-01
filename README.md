@@ -1,36 +1,101 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Full-Stack Entertainment Web App - Frontend
+
+This is the frontend for a full-stack web application built as a solution to a Frontend Mentor challenge. It allows users to browse, search, and bookmark movies and TV series, fetching live data from The Movie Database (TMDB) and connecting to a custom backend for user authentication and bookmark management.
+
+**Live Demo:** [Your-Deployment-Link-Here](https://your-live-demo-url.com)
+
+## Table of Contents
+
+- [Overview](#overview)
+- [Features](#features)
+- [Tech Stack](#tech-stack)
+- [Backend API](#backend-api)
+- [Getting Started](#getting-started)
+  - [Prerequisites](#prerequisites)
+  - [Installation](#installation)
+- [Environment Variables](#environment-variables)
+- [Acknowledgements](#acknowledgements)
+
+## Overview
+
+The application provides a seamless experience for discovering and tracking entertainment content. It features a clean, responsive interface designed from a Figma file, a secure authentication system, and a dynamic content delivery pipeline that combines a custom backend with the extensive TMDB API.
+
+![Application Screenshot](https://i.imgur.com/your-screenshot-url.png) <!-- Replace with your own screenshot URL -->
+
+## Features
+
+- **Full Authentication:** Users can sign up and log in via a custom backend API.
+- **Protected Routes & UI:** Pages like "Bookmarked Shows" and features like the "Recommended" section are only accessible/visible to authenticated users.
+- **Live Data from TMDB:** All movie and TV show information is fetched in real-time from The Movie Database API.
+- **Dynamic Search:** A debounced search functionality allows users to perform live searches for movies and TV shows on their respective pages.
+- **Persistent Bookmarking:** Authenticated users can add or remove movies/TV shows from their personal bookmark list, with data persisted in the backend database.
+- **Trailer Playback:** Users can click a "Play" button to watch the official trailer in a modal window directly within the app.
+- **Responsive Design:** The layout is fully optimized for desktop, tablet, and mobile devices.
+- **Secure API Proxy:** The TMDB API key is kept secure on the server-side using a Next.js API route as a proxy, preventing exposure to the client.
+
+## Tech Stack
+
+### Frontend
+
+![Next JS](https://img.shields.io/badge/Next-black?style=for-the-badge&logo=next.js&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)
+![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
+
+### Backend
+
+![Java](https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)
+![Spring Boot](https://img.shields.io/badge/Spring-6DB33F?style=for-the-badge&logo=spring&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white)
+![JWT](https://img.shields.io/badge/JWT-black?style=for-the-badge&logo=JSON%20web%20tokens&logoColor=white)
+
+## Backend API
+
+This is a full-stack project. The backend is a separate Spring Boot application responsible for user registration, login (JWT authentication), and managing user bookmarks.
+
+➡️ **The backend repository can be found here:** [https://github.com/KaanOzen-mF/entertainment-web-app-api](https://github.com/KaanOzen-mF/entertainment-web-app-api)
+
+You will need to have the backend server running locally for the authentication and bookmarking features to work.
 
 ## Getting Started
 
-First, run the development server:
+To get the frontend running locally, follow these simple steps.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+### Prerequisites
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- Node.js & npm
+- A running instance of the [backend API](https://github.com/KaanOzen-mF/entertainment-web-app-api).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Installation
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1.  **Clone the repository:**
+    ```bash
+    git clone [https://github.com/your-username/your-frontend-repo-name.git](https://github.com/your-username/your-frontend-repo-name.git)
+    ```
+2.  **Navigate to the project directory:**
+    ```bash
+    cd your-frontend-repo-name
+    ```
+3.  **Install Dependencies:**
+    ```bash
+    npm install
+    ```
+4.  **Set Up Environment Variables:**
+    - Create a file named `.env.local` in the root of the project.
+    - Add your TMDB API key to this file. See the [Environment Variables](#environment-variables) section below.
+5.  **Run the Development Server:**
+    ```bash
+    npm run dev
+    ```
+    The application will be available at `http://localhost:3000`.
 
-## Learn More
+## Environment Variables
 
-To learn more about Next.js, take a look at the following resources:
+To run this project, you will need to add the following environment variable to your `.env.local` file:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+`TMDB_API_KEY=your_tmdb_api_key_here`
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Acknowledgements
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- This project was a premium challenge from [Frontend Mentor](https://www.frontendmentor.io).
+- Movie and TV Show data provided by [The Movie Database (TMDB)](https://www.themoviedb.org/).
