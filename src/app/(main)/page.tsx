@@ -1,3 +1,4 @@
+// src/app/(main)/page.tsx
 "use client";
 
 import { useState, useEffect } from "react";
@@ -13,11 +14,10 @@ import { useAuth } from "@/context/AuthContext";
 import Link from "next/link";
 
 export default function Home() {
+  const { isAuthenticated } = useAuth();
   const [trendingData, setTrendingData] = useState<MediaContent[]>([]);
   const [recommendedData, setRecommendedData] = useState<MediaContent[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const { isAuthenticated } = useAuth();
-
   const [searchTerm, setSearchTerm] = useState("");
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
 
@@ -29,8 +29,15 @@ export default function Home() {
           fetchTrendingAllWeek(),
           fetchDiscoverMovies(),
         ]);
+        const enrichedRecommended = recommended.map(
+          (item: MediaContent): MediaContent => ({
+            ...item,
+            media_type: "movie" as const,
+          })
+        );
+
         setTrendingData(trending);
-        setRecommendedData(recommended);
+        setRecommendedData(enrichedRecommended);
       } catch (error) {
         console.error("Failed to fetch home page data:", error);
       } finally {
@@ -45,7 +52,6 @@ export default function Home() {
   };
 
   const isSearching = debouncedSearchTerm.length > 0;
-
   const allDataForSearch = [...trendingData, ...recommendedData];
 
   const searchResults = isSearching
@@ -75,19 +81,18 @@ export default function Home() {
             &apos;
           </h1>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-8">
-            {searchResults.map((item) => (
-              <ShowCard key={item.id} item={item} />
-            ))}
+            {searchResults.map(
+              (item) => item && <ShowCard key={item.id} item={item} />
+            )}
           </div>
         </section>
       ) : (
         <>
           <Trending data={trendingData} />
+
           {isAuthenticated ? (
-            // Eğer kullanıcı giriş yapmışsa, normal Recommended bölümünü göster
             <Recommended data={recommendedData} />
           ) : (
-            // Eğer giriş yapmamışsa, bu uyarıyı göster
             <div className="mt-6">
               <h2 className="text-xl font-light text-white mb-4">
                 Recommended for you
