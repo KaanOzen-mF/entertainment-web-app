@@ -29,23 +29,23 @@ const MediaGrid = ({
 
   useEffect(() => {
     const performSearch = async () => {
-      if (debouncedSearchTerm) {
+      if (debouncedSearchTerm && mediaType) {
         setIsSearching(true);
         let results = [];
-
         if (mediaType === "movie") {
           results = await searchMovies(debouncedSearchTerm);
         } else if (mediaType === "tv") {
           results = await searchTvShows(debouncedSearchTerm);
-        } else {
-          results = initialData.filter((item) =>
-            (item.title || item.name || "")
-              .toLowerCase()
-              .includes(debouncedSearchTerm.toLowerCase())
-          );
         }
         setDisplayedData(results);
         setIsSearching(false);
+      } else if (debouncedSearchTerm) {
+        const results = initialData.filter((item) =>
+          (item.title || item.name || "")
+            .toLowerCase()
+            .includes(debouncedSearchTerm.toLowerCase())
+        );
+        setDisplayedData(results);
       } else {
         setDisplayedData(initialData);
       }
@@ -57,6 +57,11 @@ const MediaGrid = ({
     setSearchTerm(e.target.value);
   };
 
+  const dataWithEnrichedMediaType = displayedData.map((item) => ({
+    ...item,
+    media_type: item.media_type || mediaType,
+  }));
+
   return (
     <section>
       <SearchInput
@@ -67,16 +72,16 @@ const MediaGrid = ({
 
       <h1 className="text-xl font-light text-white mb-6">
         {debouncedSearchTerm
-          ? `Found ${displayedData.length} results for '${debouncedSearchTerm}'`
+          ? `Found ${dataWithEnrichedMediaType.length} results for '${debouncedSearchTerm}'`
           : pageTitle}
       </h1>
 
       {isSearching ? (
         <LoadingSpinner />
       ) : (
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-8">
-          {displayedData.map(
-            (item) => item && <ShowCard key={item.id} item={item} />
+        <div className="grid grid-cols-2 sm.grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-8">
+          {dataWithEnrichedMediaType.map(
+            (item) => item && item.id && <ShowCard key={item.id} item={item} />
           )}
         </div>
       )}
