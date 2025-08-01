@@ -7,20 +7,32 @@ This is the frontend for a full-stack web application built as a solution to a F
 ## Table of Contents
 
 - [Overview](#overview)
+- [Screenshots](#screenshots)
 - [Features](#features)
 - [Tech Stack](#tech-stack)
 - [Backend API](#backend-api)
 - [Getting Started](#getting-started)
-  - [Prerequisites](#prerequisites)
-  - [Installation](#installation)
-- [Environment Variables](#environment-variables)
 - [Acknowledgements](#acknowledgements)
 
 ## Overview
 
 The application provides a seamless experience for discovering and tracking entertainment content. It features a clean, responsive interface designed from a Figma file, a secure authentication system, and a dynamic content delivery pipeline that combines a custom backend with the extensive TMDB API.
 
-![Application Screenshot](https://i.imgur.com/your-screenshot-url.png) <!-- Replace with your own screenshot URL -->
+## Screenshots
+
+Here are some screenshots of the application in action.
+
+|                         Home Page (Logged In)                         |                        Movies Page                         |
+| :-------------------------------------------------------------------: | :--------------------------------------------------------: |
+| ![Home Page Screenshot](./ScreenShots/Home%20Page%20with%20Login.png) | ![Movies Page Screenshot](./ScreenShots/Movies%20Page.png) |
+
+|                           TV Series Page                           |                          Bookmarked Page                           |
+| :----------------------------------------------------------------: | :----------------------------------------------------------------: |
+| ![TV Series Page Screenshot](./ScreenShots/TV%20Series%20Page.png) | ![Bookmarked Page Screenshot](./ScreenShots/Bookmarked%20Page.png) |
+
+|                        Login Page                        |                          Sign Up Page                          |
+| :------------------------------------------------------: | :------------------------------------------------------------: |
+| ![Login Page Screenshot](./ScreenShots/Login%20Page.png) | ![Register Page Screenshot](./ScreenShots/Register%20Page.png) |
 
 ## Features
 
