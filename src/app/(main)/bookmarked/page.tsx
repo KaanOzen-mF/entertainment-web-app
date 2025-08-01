@@ -2,94 +2,124 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { MediaContent } from "../../../../types";
 import MediaGrid from "@/components/MediaGrid";
 import { useBookmarks } from "@/context/BookmarkContext";
+import { useAuth } from "@/context/AuthContext";
 import { fetchMediaDetails } from "@/lib/api";
 import LoadingSpinner from "@/components/LoadingSpinner";
 
 /**
  * The page component for displaying the user's bookmarked shows.
- * It fetches the full details for each bookmarked item from the TMDB API.
+ * It conditionally renders the content based on the user's authentication status.
  */
 const BookmarkedPage = () => {
-  // 1. Get the list of bookmarked TMDB IDs and the context's loading status.
+  // 1. Get state from both Auth and Bookmark contexts.
+  const { isAuthenticated, isLoading: isAuthLoading } = useAuth();
   const { bookmarkedTmdbIds, isLoading: areBookmarksLoading } = useBookmarks();
 
-  // 2. State to store the full MediaContent objects after fetching their details.
+  // 2. Local state for this page to store the full details of bookmarked items.
   const [bookmarkedItems, setBookmarkedItems] = useState<MediaContent[]>([]);
-  // 3. State to manage the local loading status for fetching details from TMDB.
+  // 3. Local state to manage the loading status of fetching details from TMDB.
   const [isLoading, setIsLoading] = useState(true);
 
-  // This effect is responsible for fetching the full details of bookmarked items.
-  // It runs whenever the list of bookmarked IDs from the context changes.
+  // This effect fetches the full details for each bookmarked item ID.
+  // It runs when the authentication or bookmark ID list changes.
   useEffect(() => {
-    const fetchBookmarkedDetails = async () => {
-      // If the main BookmarkContext is still loading the initial list of IDs, wait.
-      if (areBookmarksLoading) return;
+    // Only proceed if the user is authenticated.
+    if (!isAuthLoading && isAuthenticated) {
+      const fetchBookmarkedDetails = async () => {
+        // If the main context is still loading the IDs, wait.
+        if (areBookmarksLoading) return;
+        // If there are no bookmarked IDs, there's nothing to fetch.
+        if (bookmarkedTmdbIds.length === 0) {
+          setBookmarkedItems([]);
+          setIsLoading(false);
+          return;
+        }
 
-      // If the user has no bookmarks, there's nothing to fetch.
-      if (bookmarkedTmdbIds.length === 0) {
-        setBookmarkedItems([]);
-        setIsLoading(false);
-        return;
-      }
+        try {
+          // 4. Create an array of promises to fetch details for each ID concurrently.
+          const promises = bookmarkedTmdbIds.map(async (id) => {
+            // Since we only store the ID, we don't know if it's a movie or TV show.
+            // First, try to fetch it as a movie.
+            let details = await fetchMediaDetails("movie", id);
+            if (details) {
+              // If successful, enrich the data with the correct media_type.
+              return { ...details, media_type: "movie" as const };
+            }
+            // If it fails, try fetching it as a TV show.
+            details = await fetchMediaDetails("tv", id);
+            if (details) {
+              return { ...details, media_type: "tv" as const };
+            }
+            // If both fail, log a warning and return null to prevent crashing.
+            console.warn(`Could not fetch details for ID: ${id}`);
+            return null;
+          });
 
-      try {
-        // 4. Create an array of promises. Each promise will fetch the details for one bookmarked ID.
-        const promises = bookmarkedTmdbIds.map(async (id) => {
-          // Since the backend only stores the ID, we don't know if it's a movie or a TV show.
-          // First, try to fetch it as a movie.
-          let details = await fetchMediaDetails("movie", id);
-          if (details) {
-            // If successful, enrich the data with the correct media_type and return it.
-            return { ...details, media_type: "movie" as const };
-          }
-          // If fetching as a movie fails, try fetching it as a TV show.
-          details = await fetchMediaDetails("tv", id);
-          if (details) {
-            // If successful, enrich the data with the correct media_type and return it.
-            return { ...details, media_type: "tv" as const };
-          }
-          // If both attempts fail (e.g., the item was removed from TMDB), log a warning and return null.
-          console.warn(`Could not fetch details for ID: ${id}`);
-          return null;
-        });
+          // 5. Wait for all fetch requests to complete.
+          const results = await Promise.all(promises);
+          // 6. Filter out any null results from failed fetches.
+          const validItems = results.filter(
+            (item): item is MediaContent => item !== null
+          );
+          setBookmarkedItems(validItems);
+        } catch (error) {
+          console.error(
+            "An unexpected error occurred while fetching bookmarked details:",
+            error
+          );
+          setBookmarkedItems([]);
+        } finally {
+          setIsLoading(false);
+        }
+      };
 
-        // 5. Wait for all the detail-fetching promises to complete.
-        const results = await Promise.all(promises);
+      fetchBookmarkedDetails();
+    } else if (!isAuthLoading && !isAuthenticated) {
+      // If the user is not logged in, stop the loading process.
+      setIsLoading(false);
+    }
+  }, [bookmarkedTmdbIds, areBookmarksLoading, isAuthenticated, isAuthLoading]);
 
-        // 6. Filter out any null results (from failed fetches) to get a clean list of valid items.
-        const validItems = results.filter(
-          (item): item is MediaContent => item !== null
-        );
-        setBookmarkedItems(validItems);
-      } catch (error) {
-        console.error(
-          "An unexpected error occurred while fetching bookmarked details:",
-          error
-        );
-        setBookmarkedItems([]); // Clear items on an unexpected error.
-      } finally {
-        setIsLoading(false); // Mark loading as complete.
-      }
-    };
-
-    fetchBookmarkedDetails();
-  }, [bookmarkedTmdbIds, areBookmarksLoading]);
-
-  // 7. Display a loading spinner if either the context or the local detail fetching is in progress.
-  if (isLoading || areBookmarksLoading) {
+  // 7. Show a loading spinner if any of the necessary data is still loading.
+  if (isLoading || isAuthLoading) {
     return <LoadingSpinner />;
   }
 
-  // 8. Once loading is complete, render the MediaGrid with the fetched bookmarked items.
+  // 8. Conditional Rendering: Show content based on authentication status.
   return (
-    <MediaGrid
-      initialData={bookmarkedItems}
-      pageTitle="Bookmarked Shows"
-      searchPlaceholder="Search in your bookmarked shows"
-    />
+    <section>
+      {isAuthenticated ? (
+        // If the user is logged in, display the grid of bookmarked items.
+        <MediaGrid
+          initialData={bookmarkedItems}
+          pageTitle="Bookmarked Shows"
+          searchPlaceholder="Search in your bookmarked shows"
+        />
+      ) : (
+        // If the user is not logged in, display a prompt to log in.
+        <div>
+          <h2 className="text-xl font-light text-white mb-4">
+            Bookmarked Shows
+          </h2>
+          <div className="bg-blue p-8 rounded-lg text-center">
+            <p className="text-white/75">
+              To see your bookmarked shows, please{" "}
+              <Link
+                href="/login"
+                className="text-red underline hover:text-white transition-colors"
+              >
+                log in
+              </Link>
+              .
+            </p>
+          </div>
+        </div>
+      )}
+    </section>
   );
 };
 
