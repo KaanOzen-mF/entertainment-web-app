@@ -1,10 +1,9 @@
-// src/components/ShowCard.tsx
-
 "use client";
 
 import Image from "next/image";
 import { MediaContent } from "../../types";
 import { useBookmarks } from "@/context/BookmarkContext";
+import { useTrailer } from "@/context/TrailerContext";
 
 type Props = {
   item: MediaContent;
@@ -12,6 +11,7 @@ type Props = {
 
 const ShowCard = ({ item }: Props) => {
   const { bookmarkedTmdbIds, toggleBookmark } = useBookmarks();
+  const { playTrailer } = useTrailer();
   const isBookmarked = bookmarkedTmdbIds.includes(item.id);
 
   const imageUrl = `https://image.tmdb.org/t/p/w500${item.poster_path}`;
@@ -54,7 +54,10 @@ const ShowCard = ({ item }: Props) => {
           />
         </div>
 
-        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+        <div
+          onClick={() => playTrailer(item)}
+          className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+        >
           <div className="bg-white/25 p-2 pr-5 rounded-full flex items-center gap-4 transform transition-transform duration-300 group-hover:translate-y-0 translate-y-4">
             <Image
               src="/assets/icon-play.svg"
