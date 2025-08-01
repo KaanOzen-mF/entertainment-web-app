@@ -103,7 +103,7 @@ const SignUpPage = () => {
           {error && <p className="text-red mt-2">{error}</p>}
           <button
             type="submit"
-            className="bg-red text-white p-4 rounded-md mt-4 hover:bg-white hover:text-black transition-colors"
+            className="bg-red text-white p-4 rounded-md mt-4 hover:bg-white hover:text-black transition-colors cursor-pointer"
           >
             Create an account
           </button>
