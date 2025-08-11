@@ -28,13 +28,16 @@ const LoginPage = () => {
 
     try {
       // 3. Send a POST request to the backend's login endpoint.
-      const response = await fetch("http://localhost:8080/api/v1/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password }),
-      });
+      const response = await fetch(
+        "https://api.entertainmentapp.kaanozen.com/api/v1/auth/login",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email, password }),
+        }
+      );
 
       // If the response is not successful (e.g., 403 Forbidden for wrong credentials), throw an error.
       if (!response.ok) {

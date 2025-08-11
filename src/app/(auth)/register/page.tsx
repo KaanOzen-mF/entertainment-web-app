@@ -36,7 +36,7 @@ const SignUpPage = () => {
     try {
       // 4. Send a POST request to the backend's register endpoint.
       const response = await fetch(
-        "http://localhost:8080/api/v1/auth/register",
+        "https://api.entertainmentapp.kaanozen.com/api/v1/auth/register",
         {
           method: "POST",
           headers: {
