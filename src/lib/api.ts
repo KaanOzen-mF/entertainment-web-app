@@ -38,7 +38,7 @@ const fetchFromTmdb = async (path: string) => {
 // --- BACKEND API HELPERS ---
 
 // The base URL for our own Java/Spring Boot backend API.
-const BACKEND_API_BASE_URL = "http://69.62.114.171:8081/api/v1";
+const BACKEND_API_BASE_URL = "https://api.entertainmentapp.kaanozen.com/api/v1";
 
 /**
  * A wrapper around the native fetch API that automatically adds the
