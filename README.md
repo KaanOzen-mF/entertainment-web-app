@@ -2,7 +2,7 @@
 
 This is the frontend for a full-stack web application built as a solution to a Frontend Mentor challenge. It allows users to browse, search, and bookmark movies and TV series, fetching live data from The Movie Database (TMDB) and connecting to a custom backend for user authentication and bookmark management.
 
-**Live Demo:** (https://entertainmentapp.kaanozen.com/)
+**Live Demo:** [Live Demo](https://your-live-demo-url.com)
 
 ## Table of Contents
 
